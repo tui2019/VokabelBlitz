@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -259,20 +260,31 @@ fun HomeScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // Start Quiz button
+        // Start Quiz button (Premium M3E Stoppuhr-style pill button)
         Button(
             onClick = onStartQuiz,
             enabled = wordCount > 0,
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.38f)
+            ),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(84.dp)
         ) {
-            Icon(Icons.Default.PlayArrow, contentDescription = null)
-            Spacer(modifier = Modifier.width(8.dp))
+            Icon(
+                Icons.Default.PlayArrow,
+                contentDescription = null,
+                modifier = Modifier.size(28.dp)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
-                if (wordCount > 0) "Start Quiz ($wordCount words)"
-                else "Add words to start a quiz",
-                style = MaterialTheme.typography.titleMedium
+                text = if (wordCount > 0) "Start Quiz ($wordCount words)" else "Add words to start a quiz",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
         }
 
