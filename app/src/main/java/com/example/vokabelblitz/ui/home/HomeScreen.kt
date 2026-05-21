@@ -198,8 +198,8 @@ fun HomeScreen(
                 shape = RoundedCornerShape(buttonCornerSize),
                 modifier = Modifier.size(64.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(
-                    containerColor = MaterialTheme.colorScheme.secondary,
-                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                    containerColor = MaterialTheme.colorScheme.tertiary,
+                    contentColor = MaterialTheme.colorScheme.onTertiary,
                     disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
                     disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
