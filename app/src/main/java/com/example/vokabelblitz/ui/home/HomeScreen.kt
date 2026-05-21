@@ -1,6 +1,7 @@
 package com.example.vokabelblitz.ui.home
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
@@ -61,6 +62,11 @@ fun HomeScreen(
     val translationState by viewModel.translationState.collectAsStateWithLifecycle()
     val wordCount by viewModel.wordCount.collectAsStateWithLifecycle()
     val modelStatus by viewModel.modelStatus.collectAsStateWithLifecycle()
+
+    val buttonCornerSize by animateDpAsState(
+        targetValue = if (inputWord.isNotBlank()) 16.dp else 32.dp,
+        label = "SendButtonCornerSize"
+    )
 
     Column(
         modifier = modifier
@@ -185,11 +191,11 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            // Send / Add Word button (Expressive square shape)
+            // Send / Add Word button (Expressive morphing shape)
             FilledIconButton(
                 onClick = { viewModel.translateWord() },
                 enabled = inputWord.isNotBlank() && translationState !is TranslationState.Translating,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(buttonCornerSize),
                 modifier = Modifier.size(64.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
