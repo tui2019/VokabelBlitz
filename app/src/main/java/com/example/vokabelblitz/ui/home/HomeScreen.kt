@@ -44,11 +44,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextGeometricTransform
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -82,14 +85,20 @@ fun HomeScreen(
         // Header (Premium M3E Blocky horizontally stretched Monospace Typography)
         Spacer(modifier = Modifier.height(32.dp))
         Text(
-            text = "VokabelBlitz",
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                    append("Vokabel")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
+                    append("Blitz")
+                }
+            },
             style = MaterialTheme.typography.displayMedium.copy(
                 fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.ExtraBold,
                 textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
             ),
-            letterSpacing = (-1.5).sp,
-            color = MaterialTheme.colorScheme.primary
+            letterSpacing = (-1.5).sp
         )
 
         Spacer(modifier = Modifier.height(32.dp))
