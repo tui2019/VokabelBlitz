@@ -1,5 +1,6 @@
 package com.example.vokabelblitz
-
+ 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
@@ -25,19 +26,23 @@ import com.example.vokabelblitz.ui.home.HomeScreen
 import com.example.vokabelblitz.ui.quiz.QuizScreen
 import com.example.vokabelblitz.ui.words.WordsScreen
 import androidx.compose.runtime.collectAsState
-
+ 
 data class BottomNavItem(
     val label: String,
     val selectedIcon: ImageVector,
     val unselectedIcon: ImageVector
 )
-
+ 
 @Composable
 fun MainNavigation() {
     val viewModel: WordViewModel = viewModel()
     val isQuizActive by viewModel.isQuizActive.collectAsState()
-
+ 
     if (isQuizActive) {
+        // Intercept back gesture inside Quiz Screen to return to Home screen
+        BackHandler {
+            viewModel.endQuiz()
+        }
         QuizScreen(
             viewModel = viewModel,
             onExit = { viewModel.endQuiz() },
@@ -47,18 +52,25 @@ fun MainNavigation() {
         MainScaffold(viewModel = viewModel)
     }
 }
-
+ 
 @Composable
 private fun MainScaffold(viewModel: WordViewModel) {
     var selectedTab by remember { mutableIntStateOf(0) }
-
+ 
+    // Intercept back gesture on the Words tab to return to the Learn (Home) tab
+    if (selectedTab != 0) {
+        BackHandler {
+            selectedTab = 0
+        }
+    }
+ 
     val navItems = remember {
         listOf(
             BottomNavItem("Learn", Icons.Filled.Home, Icons.Outlined.Home),
             BottomNavItem("Words", Icons.Filled.LibraryBooks, Icons.Outlined.LibraryBooks)
         )
     }
-
+ 
     Scaffold(
         bottomBar = {
             NavigationBar {
