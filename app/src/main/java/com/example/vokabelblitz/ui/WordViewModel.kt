@@ -34,7 +34,8 @@ data class QuizState(
     val isRevealed: Boolean = false,
     val isFinished: Boolean = false,
     val knownCount: Int = 0,
-    val learningCount: Int = 0
+    val learningCount: Int = 0,
+    val isReversed: Boolean = false
 ) {
     val currentWord: Word? get() = words.getOrNull(currentIndex)
     val progress: Float get() = if (words.isEmpty()) 0f else currentIndex.toFloat() / words.size
@@ -126,10 +127,20 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             val words = wordDao.getAllWordsShuffled()
             if (words.isNotEmpty()) {
-                _quizState.value = QuizState(words = words)
+                val previousReversed = _quizState.value.isReversed
+                _quizState.value = QuizState(words = words, isReversed = previousReversed)
                 _isQuizActive.value = true
             }
         }
+    }
+
+    fun toggleQuizLanguage() {
+        val current = _quizState.value
+        val shuffledWords = current.words.shuffled()
+        _quizState.value = QuizState(
+            words = shuffledWords,
+            isReversed = !current.isReversed
+        )
     }
 
     fun revealAnswer() {

@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -59,7 +60,14 @@ fun QuizScreen(
             CenterAlignedTopAppBar(
                 title = {
                     if (!quizState.isFinished) {
-                        Text("${quizState.currentIndex + 1} / ${quizState.totalWords}")
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text("${quizState.currentIndex + 1} / ${quizState.totalWords}", style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = if (quizState.isReversed) "English ➔ German" else "German ➔ English",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     } else {
                         Text("Results")
                     }
@@ -70,6 +78,16 @@ fun QuizScreen(
                         onExit()
                     }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (!quizState.isFinished) {
+                        IconButton(onClick = { viewModel.toggleQuizLanguage() }) {
+                            Icon(
+                                imageVector = Icons.Default.SwapHoriz,
+                                contentDescription = "Reverse Language"
+                            )
+                        }
                     }
                 }
             )
@@ -134,10 +152,10 @@ fun QuizScreen(
                         contentAlignment = Alignment.Center
                     ) {
                         if (!quizState.isRevealed) {
-                            // Front: show German word
+                            // Front: show word based on direction
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = currentWord.germanWord,
+                                    text = if (quizState.isReversed) currentWord.englishTranslation else currentWord.germanWord,
                                     style = MaterialTheme.typography.displaySmall,
                                     fontWeight = FontWeight.Bold,
                                     textAlign = TextAlign.Center
@@ -150,10 +168,10 @@ fun QuizScreen(
                                 )
                             }
                         } else {
-                            // Back: show English + example
+                            // Back: show translation + example
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = currentWord.germanWord,
+                                    text = if (quizState.isReversed) currentWord.englishTranslation else currentWord.germanWord,
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -167,7 +185,7 @@ fun QuizScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = currentWord.englishTranslation,
+                                    text = if (quizState.isReversed) currentWord.germanWord else currentWord.englishTranslation,
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
