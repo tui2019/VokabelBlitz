@@ -14,6 +14,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -21,11 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.example.vokabelblitz.ui.WordViewModel
 import com.example.vokabelblitz.ui.home.HomeScreen
 import com.example.vokabelblitz.ui.quiz.QuizScreen
 import com.example.vokabelblitz.ui.words.WordsScreen
-import androidx.compose.runtime.collectAsState
  
 data class BottomNavItem(
     val label: String,
@@ -36,25 +39,35 @@ data class BottomNavItem(
 @Composable
 fun MainNavigation() {
     val viewModel: WordViewModel = viewModel()
-    val isQuizActive by viewModel.isQuizActive.collectAsState()
+    val navController = rememberNavController()
  
-    if (isQuizActive) {
-        // Intercept back gesture inside Quiz Screen to return to Home screen
-        BackHandler {
-            viewModel.endQuiz()
+    NavHost(navController = navController, startDestination = "main") {
+        composable("main") {
+            MainScaffold(
+                viewModel = viewModel,
+                onStartQuiz = {
+                    viewModel.startQuiz()
+                    navController.navigate("quiz")
+                }
+            )
         }
-        QuizScreen(
-            viewModel = viewModel,
-            onExit = { viewModel.endQuiz() },
-            modifier = Modifier.safeDrawingPadding()
-        )
-    } else {
-        MainScaffold(viewModel = viewModel)
+        composable("quiz") {
+            DisposableEffect(Unit) {
+                onDispose {
+                    viewModel.endQuiz()
+                }
+            }
+            QuizScreen(
+                viewModel = viewModel,
+                onExit = { navController.popBackStack() },
+                modifier = Modifier.safeDrawingPadding()
+            )
+        }
     }
 }
  
 @Composable
-private fun MainScaffold(viewModel: WordViewModel) {
+private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
     var selectedTab by remember { mutableIntStateOf(0) }
  
     // Intercept back gesture on the Words tab to return to the Learn (Home) tab
@@ -93,7 +106,7 @@ private fun MainScaffold(viewModel: WordViewModel) {
         when (selectedTab) {
             0 -> HomeScreen(
                 viewModel = viewModel,
-                onStartQuiz = { viewModel.startQuiz() },
+                onStartQuiz = onStartQuiz,
                 modifier = Modifier.padding(innerPadding)
             )
             1 -> WordsScreen(
