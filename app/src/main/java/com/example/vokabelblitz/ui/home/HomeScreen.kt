@@ -48,7 +48,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.vokabelblitz.ai.ModelStatus
 import com.example.vokabelblitz.ui.TranslationState
@@ -77,13 +79,16 @@ fun HomeScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header (Premium M3E Playful Serif Typography)
+        // Header (Premium M3E Blocky horizontally stretched Monospace Typography)
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "VokabelBlitz",
-            style = MaterialTheme.typography.displayMedium,
-            fontWeight = FontWeight.ExtraBold,
-            fontFamily = FontFamily.Serif,
+            style = MaterialTheme.typography.displayMedium.copy(
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.ExtraBold,
+                textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
+            ),
+            letterSpacing = (-1.5).sp,
             color = MaterialTheme.colorScheme.primary
         )
 
