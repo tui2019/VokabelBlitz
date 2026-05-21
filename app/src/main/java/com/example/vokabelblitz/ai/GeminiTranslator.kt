@@ -142,13 +142,34 @@ class GeminiTranslator(private val context: Context) {
     }
 
     private fun buildTranslationPrompt(word: String): String {
-        return """Translate the German word/phrase "$word" to English.
-Also, format the German word correctly (e.g. if it is a noun and the gender article "der/die/das" is missing, prepend it correctly like "der Apfel", "die Tasche", "das Buch", etc.; verbs should remain in their infinitive form).
-If the input "$word" is gibberish, invalid, not a real word/phrase, or not in German, respond ONLY with "ERROR: Invalid German word" and nothing else.
-Respond ONLY in this exact format with no extra text:
-FORMATTED: [the formatted German word, including der/die/das if it is a noun]
+        return """You are a highly accurate German-to-English dictionary and grammar assistant.
+Analyze the German input word or phrase: "$word"
+
+First, determine its primary part of speech. Then, format the German word/phrase and translate it strictly according to these rules:
+
+1. VERBS: If the input is primarily a German verb in its infinitive form (e.g., "spielen", "laufen", "kochen", "gehen", "sehen", "arbeiten", "essen"):
+   - Keep it strictly in its lowercase infinitive form (e.g., "spielen").
+   - DO NOT capitalize the first letter.
+   - DO NOT prepend any definite article ("der", "die", or "das").
+   - DO NOT convert it into a noun (for example, "laufen" must remain "laufen", NOT "das Laufen").
+   - The English translation MUST start with "to " (e.g., "to run", "to play").
+
+2. ADJECTIVES/ADVERBS: If the input is primarily a German adjective or adverb (e.g., "schnell", "schön", "oft", "blau", "kalt"):
+   - Keep it strictly in its lowercase, basic natural form (e.g., "schnell").
+   - DO NOT prepend any article.
+   - DO NOT convert it into a noun (for example, "schnell" must remain "schnell", NOT "die Schnelligkeit").
+
+3. NOUNS: ONLY if the input is primarily a German noun (e.g., "Apfel", "Tasche", "Buch", "Computer", "Küche"):
+   - Capitalize the first letter (e.g., "Apfel").
+   - Determine its grammatical gender and prepend the correct definite article ("der", "die", or "das") if it is missing (e.g., "Apfel" -> "der Apfel", "Tasche" -> "die Tasche", "Buch" -> "das Buch").
+
+If the input "$word" is gibberish, invalid, misspelled, or not a real German word/phrase, you MUST respond ONLY with:
+ERROR: Invalid German word
+
+Otherwise, respond ONLY in this exact format with no extra text or explanations:
+FORMATTED: [the formatted German word/phrase based on the rules above]
 TRANSLATION: [the English translation]
-EXAMPLE: [a natural German sentence using the formatted word]"""
+EXAMPLE: [a natural, grammatically correct German sentence using the formatted German word/phrase]"""
     }
 
     private fun parseTranslationResponse(response: String, originalWord: String): TranslationResult? {
