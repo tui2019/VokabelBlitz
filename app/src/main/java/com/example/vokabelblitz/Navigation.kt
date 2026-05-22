@@ -99,8 +99,8 @@ private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
  
     val navItems = remember {
         listOf(
-            BottomNavItem("Learn", Icons.Filled.Home, Icons.Outlined.Home),
-            BottomNavItem("Words", Icons.Filled.LibraryBooks, Icons.Outlined.LibraryBooks)
+            BottomNavItem("Lernen", Icons.Filled.Home, Icons.Outlined.Home),
+            BottomNavItem("Wörter", Icons.Filled.LibraryBooks, Icons.Outlined.LibraryBooks)
         )
     }
  

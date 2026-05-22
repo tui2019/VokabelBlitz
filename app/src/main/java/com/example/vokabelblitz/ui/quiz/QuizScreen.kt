@@ -63,13 +63,13 @@ fun QuizScreen(
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text("${quizState.currentIndex + 1} / ${quizState.totalWords}", style = MaterialTheme.typography.titleMedium)
                             Text(
-                                text = if (quizState.isReversed) "English ➔ German" else "German ➔ English",
+                                text = if (quizState.isReversed) "Englisch ➔ Deutsch" else "Deutsch ➔ Englisch",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
                     } else {
-                        Text("Results")
+                        Text("Ergebnisse")
                     }
                 },
                 navigationIcon = {
@@ -77,7 +77,7 @@ fun QuizScreen(
                         viewModel.endQuiz()
                         onExit()
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Zurück")
                     }
                 },
                 actions = {
@@ -85,7 +85,7 @@ fun QuizScreen(
                         IconButton(onClick = { viewModel.toggleQuizLanguage() }) {
                             Icon(
                                 imageVector = Icons.Default.SwapHoriz,
-                                contentDescription = "Reverse Language"
+                                contentDescription = "Sprachrichtung umkehren"
                             )
                         }
                     }
@@ -162,7 +162,7 @@ fun QuizScreen(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Tap to reveal",
+                                    text = "Tippen zum Aufdecken",
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                                 )
@@ -214,7 +214,7 @@ fun QuizScreen(
                     ) {
                         Icon(Icons.Default.Visibility, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Show Answer")
+                        Text("Antwort anzeigen")
                     }
                 } else {
                     // Know it / Still learning buttons
@@ -228,7 +228,7 @@ fun QuizScreen(
                         ) {
                             Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Still learning")
+                            Text("Lerne noch")
                         }
                         Button(
                             onClick = { viewModel.markKnown() },
@@ -236,7 +236,7 @@ fun QuizScreen(
                         ) {
                             Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text("Know it!")
+                            Text("Kann ich!")
                         }
                     }
                 }
@@ -266,7 +266,7 @@ private fun QuizResults(
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Quiz Complete!",
+            text = "Quiz abgeschlossen!",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
@@ -283,7 +283,7 @@ private fun QuizResults(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Known", style = MaterialTheme.typography.bodyLarge)
+                    Text("Gewusst", style = MaterialTheme.typography.bodyLarge)
                     Text(
                         "$knownCount / $totalWords",
                         style = MaterialTheme.typography.bodyLarge,
@@ -296,7 +296,7 @@ private fun QuizResults(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text("Still learning", style = MaterialTheme.typography.bodyLarge)
+                    Text("Lerne noch", style = MaterialTheme.typography.bodyLarge)
                     Text(
                         "$learningCount / $totalWords",
                         style = MaterialTheme.typography.bodyLarge,
@@ -315,7 +315,7 @@ private fun QuizResults(
         ) {
             Icon(Icons.Default.Refresh, contentDescription = null)
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Quiz Again")
+            Text("Quiz wiederholen")
         }
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -324,7 +324,7 @@ private fun QuizResults(
             onClick = onExit,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Back to Home")
+            Text("Zurück zu Start")
         }
     }
 }

@@ -46,11 +46,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextGeometricTransform
+import com.example.vokabelblitz.R
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,7 +84,11 @@ fun HomeScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Header (Premium M3E Blocky horizontally stretched Monospace Typography)
+        val RobotoFlexFamily = FontFamily(
+            Font(R.font.robotoflex, FontWeight.W900)
+        )
+
+        // Header (Premium M3E Roboto Flex Typography)
         Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = buildAnnotatedString {
@@ -94,11 +100,11 @@ fun HomeScreen(
                 }
             },
             style = MaterialTheme.typography.displayMedium.copy(
-                fontFamily = FontFamily.Monospace,
-                fontWeight = FontWeight.ExtraBold,
+                fontFamily = RobotoFlexFamily,
+                fontWeight = FontWeight.W900,
                 textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
             ),
-            letterSpacing = (-1.5).sp
+            letterSpacing = (-3).sp
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -119,7 +125,7 @@ fun HomeScreen(
                         CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            "AI model loading...",
+                            "KI-Modell wird geladen...",
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -134,7 +140,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        "Gemini Nano not available on this device",
+                        "Gemini Nano auf diesem Gerät nicht verfügbar",
                         modifier = Modifier.padding(12.dp),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onErrorContainer
@@ -150,7 +156,7 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        "AI Error: ${(modelStatus as ModelStatus.Error).message}",
+                        "KI-Fehler: ${(modelStatus as ModelStatus.Error).message}",
                         modifier = Modifier.padding(12.dp),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onErrorContainer
@@ -169,7 +175,7 @@ fun HomeScreen(
             TextField(
                 value = inputWord,
                 onValueChange = { viewModel.updateInputWord(it) },
-                placeholder = { Text("Enter a German word…") },
+                placeholder = { Text("Wort eingeben…") },
                 singleLine = true,
                 shape = CircleShape,
                 colors = TextFieldDefaults.colors(
@@ -244,7 +250,7 @@ fun HomeScreen(
                             CircularProgressIndicator()
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                "Translating & saving with Gemini Nano...",
+                                "Übersetzen & Speichern mit Gemini Nano...",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
@@ -293,7 +299,7 @@ fun HomeScreen(
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = if (wordCount > 0) "Start Quiz ($wordCount words)" else "Add words to start a quiz",
+                text = if (wordCount > 0) "Quiz starten ($wordCount Wörter)" else "Wörter hinzufügen, um ein Quiz zu starten",
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )

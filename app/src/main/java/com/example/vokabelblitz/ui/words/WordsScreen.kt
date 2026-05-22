@@ -58,13 +58,13 @@ fun WordsScreen(
         // Header
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "My Words",
+            text = "Meine Wörter",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 4.dp)
         )
         Text(
-            text = "${words.size} words in your vocabulary",
+            text = "${words.size} Wörter in deinem Wortschatz",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -85,12 +85,12 @@ fun WordsScreen(
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "No words yet",
+                        text = "Noch keine Wörter",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = "Go to the Learn tab to add your first word!",
+                        text = "Gehe zum Reiter 'Lernen', um dein erstes Wort hinzuzufügen!",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
                         textAlign = TextAlign.Center
@@ -150,7 +150,7 @@ private fun WordCard(
             ) {
                 Icon(
                     Icons.Default.Delete,
-                    contentDescription = "Delete",
+                    contentDescription = "Löschen",
                     tint = MaterialTheme.colorScheme.onErrorContainer
                 )
             }
@@ -209,7 +209,7 @@ private fun WordCard(
                 IconButton(onClick = onDelete) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Delete word",
+                        contentDescription = "Wort löschen",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
                 }

@@ -106,7 +106,7 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
                 _translationState.value = TranslationState.Idle
             } else {
                 _translationState.value = TranslationState.Error(
-                    "Invalid German word. Please check your spelling."
+                    "Ungültiges Wort. Bitte überprüfe deine Schreibweise."
                 )
             }
         }
