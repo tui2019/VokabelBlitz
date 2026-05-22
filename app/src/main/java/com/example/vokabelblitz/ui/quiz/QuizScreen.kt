@@ -74,10 +74,13 @@ fun QuizScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        viewModel.endQuiz()
-                        onExit()
-                    }) {
+                    androidx.compose.material3.FilledTonalIconButton(
+                        onClick = {
+                            viewModel.endQuiz()
+                            onExit()
+                        },
+                        modifier = Modifier.padding(start = 8.dp)
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Zurück")
                     }
                 },
