@@ -40,6 +40,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -152,6 +155,17 @@ fun QuizScreen(
                     label = "cardFlip"
                 )
 
+                // Track current and previous words to prevent translation peeking during flip-back
+                var previousWord by remember { mutableStateOf(currentWord) }
+                var lastWord by remember { mutableStateOf(currentWord) }
+
+                if (currentWord != lastWord) {
+                    previousWord = lastWord
+                    lastWord = currentWord
+                }
+
+                val displayedBackWord = if (quizState.isRevealed) currentWord else previousWord
+
                 // Flashcard
                 Card(
                     colors = CardDefaults.cardColors(
@@ -202,7 +216,7 @@ fun QuizScreen(
                             // Back: show translation + example
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = if (quizState.isReversed) currentWord.englishTranslation else currentWord.germanWord,
+                                    text = if (quizState.isReversed) displayedBackWord.englishTranslation else displayedBackWord.germanWord,
                                     style = MaterialTheme.typography.titleLarge,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -216,7 +230,7 @@ fun QuizScreen(
                                 )
                                 Spacer(modifier = Modifier.height(8.dp))
                                 Text(
-                                    text = if (quizState.isReversed) currentWord.germanWord else currentWord.englishTranslation,
+                                    text = if (quizState.isReversed) displayedBackWord.germanWord else displayedBackWord.englishTranslation,
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -224,7 +238,7 @@ fun QuizScreen(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "\"${currentWord.usageExample}\"",
+                                    text = "\"${displayedBackWord.usageExample}\"",
                                     style = MaterialTheme.typography.bodyMedium,
                                     fontStyle = FontStyle.Italic,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
