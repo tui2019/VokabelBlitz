@@ -184,7 +184,8 @@ private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
             )
             1 -> WordsScreen(
                 viewModel = viewModel,
-                modifier = Modifier.padding(innerPadding)
+                modifier = Modifier.padding(top = innerPadding.calculateTopPadding()),
+                bottomPadding = innerPadding.calculateBottomPadding()
             )
         }
     }
