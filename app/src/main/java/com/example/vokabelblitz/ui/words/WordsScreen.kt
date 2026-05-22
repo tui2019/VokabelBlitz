@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -48,6 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.scale
@@ -182,16 +184,22 @@ private fun WordCard(
         label = "trash_scale"
     )
 
+    // Dynamic width spring animation for the separate capsule
+    val capsuleWidth by animateDpAsState(
+        targetValue = if (isThresholdReached) 100.dp else 76.dp,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "capsule_width"
+    )
+
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
-            // High-fidelity vibrantly colored capsule/pill matching Google Clock app style
-            val backgroundColor = Color(0xFFFF7878) // Coral-red hex
+            // Separate, standalone floating coral capsule container matching Google Clock app style
             Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(backgroundColor, shape = RoundedCornerShape(24.dp))
-                    .padding(horizontal = 24.dp),
+                modifier = Modifier.fillMaxSize(),
                 contentAlignment = when (direction) {
                     SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
                     SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
@@ -199,14 +207,25 @@ private fun WordCard(
                 }
             ) {
                 if (direction != SwipeToDismissBoxValue.Settled) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Löschen",
-                        tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
+                    Box(
                         modifier = Modifier
-                            .scale(iconScale)
-                            .size(28.dp)
-                    )
+                            .fillMaxHeight()
+                            .width(capsuleWidth)
+                            .background(
+                                color = Color(0xFFFF7878), // Coral-red hex
+                                shape = RoundedCornerShape(24.dp) // Fully rounded standalone pill shape
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Löschen",
+                            tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
+                            modifier = Modifier
+                                .scale(iconScale)
+                                .size(28.dp)
+                        )
+                    }
                 }
             }
         },
