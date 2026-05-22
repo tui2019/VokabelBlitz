@@ -43,6 +43,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.animation.core.tween
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -61,6 +64,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import kotlin.math.abs
@@ -158,7 +162,8 @@ fun WordsScreen(
                 ) { word ->
                     WordCard(
                         word = word,
-                        onDelete = { viewModel.deleteWord(word) }
+                        onDelete = { viewModel.deleteWord(word) },
+                        modifier = Modifier.animateItem()
                     )
                 }
             }
@@ -178,15 +183,29 @@ private fun WordCard(
 
     // Track whether the user's finger is currently touching the card
     var isTouching by remember { mutableStateOf(false) }
+    // Track whether we are in the vertical collapse phase
+    var isShrinking by remember { mutableStateOf(false) }
 
-    // Only delete after the user releases their finger AND the swipe settled at a dismissed state
+    // Start vertical shrink after the user releases their finger AND the swipe settled at a dismissed state
     LaunchedEffect(dismissState.currentValue, isTouching) {
         if (!isTouching &&
             (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
              dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd)) {
-            onDelete()
+            isShrinking = true
         }
     }
+
+    // Animate the height of the item from 100% to 0% during the shrink phase
+    val shrinkHeightFactor by animateFloatAsState(
+        targetValue = if (isShrinking) 0f else 1f,
+        animationSpec = tween(durationMillis = 280),
+        finishedListener = {
+            if (isShrinking) {
+                onDelete()
+            }
+        },
+        label = "shrink_height"
+    )
 
     val direction = dismissState.dismissDirection
     val isThresholdReached = dismissState.targetValue != SwipeToDismissBoxValue.Settled
@@ -216,38 +235,66 @@ private fun WordCard(
 
     // Observe touch events without consuming them to track finger up/down
     Box(
-        modifier = Modifier.pointerInput(Unit) {
-            awaitEachGesture {
-                awaitPointerEvent(pass = PointerEventPass.Initial)
-                isTouching = true
-                do {
-                    val event = awaitPointerEvent(pass = PointerEventPass.Initial)
-                } while (event.changes.any { it.pressed })
-                isTouching = false
+        modifier = modifier
+            .clip(RoundedCornerShape(12.dp))
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints)
+                val currentHeight = (placeable.height * shrinkHeightFactor).toInt()
+                layout(placeable.width, currentHeight) {
+                    placeable.placeRelative(0, 0)
+                }
             }
-        }
+            .pointerInput(Unit) {
+                awaitEachGesture {
+                    awaitPointerEvent(pass = PointerEventPass.Initial)
+                    isTouching = true
+                    do {
+                        val event = awaitPointerEvent(pass = PointerEventPass.Initial)
+                    } while (event.changes.any { it.pressed })
+                    isTouching = false
+                }
+            }
     ) {
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
-            // Separate, standalone floating coral capsule container matching Google Clock app style
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = when (direction) {
-                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
-                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+            val showBackground = direction != SwipeToDismissBoxValue.Settled || isShrinking
+            if (showBackground) {
+                val isDismissed = dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
+                                 dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd ||
+                                 isShrinking
+
+                val alignment = when {
+                    isShrinking -> Alignment.Center
+                    direction == SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                    direction == SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
                     else -> Alignment.Center
                 }
-            ) {
-                if (direction != SwipeToDismissBoxValue.Settled) {
-                    Box(
-                        modifier = Modifier
+
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = alignment
+                ) {
+                    val modifierForRed = if (isDismissed) {
+                        Modifier
+                            .fillMaxHeight()
+                            .fillMaxWidth()
+                            .background(
+                                color = Color(0xFFFF7878), // Coral-red hex
+                                shape = RoundedCornerShape(12.dp) // matches the card corner radius
+                            )
+                    } else {
+                        Modifier
                             .fillMaxHeight()
                             .width(capsuleWidth)
                             .background(
-                                color = Color(0xFFFF7878), // Coral-red hex
-                                shape = RoundedCornerShape(24.dp) // Fully rounded standalone pill shape
-                            ),
+                                color = Color(0xFFFF7878),
+                                shape = RoundedCornerShape(24.dp) // fully rounded pill
+                            )
+                    }
+
+                    Box(
+                        modifier = modifierForRed,
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -255,7 +302,7 @@ private fun WordCard(
                             contentDescription = "Löschen",
                             tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
                             modifier = Modifier
-                                .scale(iconScale)
+                                .scale(iconScale * shrinkHeightFactor)
                                 .size(28.dp)
                         )
                     }
@@ -264,7 +311,7 @@ private fun WordCard(
         },
         enableDismissFromStartToEnd = true,
         enableDismissFromEndToStart = true,
-        modifier = modifier
+        modifier = Modifier.fillMaxWidth()
     ) {
         Card(
             colors = CardDefaults.cardColors(
