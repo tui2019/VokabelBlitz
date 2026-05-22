@@ -106,7 +106,7 @@ fun WordsScreen(
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .padding(bottom = bottomPadding + 8.dp)
+                    .padding(bottom = bottomPadding - 16.dp)
             )
         },
         containerColor = Color.Transparent,
