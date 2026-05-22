@@ -113,15 +113,16 @@ fun QuickEntryScreen(
         modifier = Modifier
             .fillMaxSize()
             .clickable(onClick = onDismiss),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.BottomCenter
     ) {
-        // Floating dialog card
+        // Bottom-sheet dialog card
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .wrapContentHeight()
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .imePadding()
                 .clickable(enabled = false) {}, // Consume clicks inside the card
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
             ),
