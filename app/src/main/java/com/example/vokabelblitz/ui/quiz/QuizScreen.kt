@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.ui.res.painterResource
 import com.example.vokabelblitz.R
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -220,7 +222,7 @@ fun QuizScreen(
                     // Show reveal button
                     FilledTonalButton(
                         onClick = { viewModel.revealAnswer() },
-                        shape = CircleShape,
+                        shape = RoundedCornerShape(24.dp),
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
@@ -243,9 +245,13 @@ fun QuizScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
-                        OutlinedButton(
+                        Button(
                             onClick = { viewModel.markLearning() },
-                            shape = CircleShape,
+                            shape = RoundedCornerShape(24.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.tertiary,
+                                contentColor = MaterialTheme.colorScheme.onTertiary
+                            ),
                             modifier = Modifier
                                 .weight(1f)
                                 .height(56.dp)
@@ -264,9 +270,13 @@ fun QuizScreen(
                         }
                         Button(
                             onClick = { viewModel.markKnown() },
-                            shape = CircleShape,
+                            shape = RoundedCornerShape(24.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            ),
                             modifier = Modifier
-                                .weight(1f)
+                                .weight(2f)
                                 .height(56.dp)
                         ) {
                             Icon(
@@ -354,7 +364,7 @@ private fun QuizResults(
 
         Button(
             onClick = onRestart,
-            shape = CircleShape,
+            shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(60.dp)
@@ -376,7 +386,7 @@ private fun QuizResults(
 
         OutlinedButton(
             onClick = onExit,
-            shape = CircleShape,
+            shape = RoundedCornerShape(24.dp),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
