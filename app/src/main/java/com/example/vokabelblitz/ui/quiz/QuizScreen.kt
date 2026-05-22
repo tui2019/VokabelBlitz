@@ -3,6 +3,7 @@ package com.example.vokabelblitz.ui.quiz
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -219,11 +220,22 @@ fun QuizScreen(
                     // Show reveal button
                     FilledTonalButton(
                         onClick = { viewModel.revealAnswer() },
-                        modifier = Modifier.fillMaxWidth()
+                        shape = CircleShape,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
                     ) {
-                        Icon(Icons.Default.Visibility, contentDescription = null)
+                        Icon(
+                            Icons.Default.Visibility,
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Text("Antwort anzeigen")
+                        Text(
+                            text = "Antwort anzeigen",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 } else {
                     // Know it / Still learning buttons
@@ -233,19 +245,41 @@ fun QuizScreen(
                     ) {
                         OutlinedButton(
                             onClick = { viewModel.markLearning() },
-                            modifier = Modifier.weight(1f)
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(56.dp)
                         ) {
-                            Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Lerne noch")
+                            Icon(
+                                Icons.Default.Refresh,
+                                contentDescription = null,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = "Lerne noch",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                         Button(
                             onClick = { viewModel.markKnown() },
-                            modifier = Modifier.weight(1f)
+                            shape = CircleShape,
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(56.dp)
                         ) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text("Kann ich!")
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.5.dp))
+                            Text(
+                                text = "Kann ich!",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold
+                            )
                         }
                     }
                 }
@@ -320,20 +354,38 @@ private fun QuizResults(
 
         Button(
             onClick = onRestart,
-            modifier = Modifier.fillMaxWidth()
+            shape = CircleShape,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
         ) {
-            Icon(Icons.Default.Refresh, contentDescription = null)
+            Icon(
+                Icons.Default.Refresh,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
             Spacer(modifier = Modifier.width(8.dp))
-            Text("Quiz wiederholen")
+            Text(
+                text = "Quiz wiederholen",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedButton(
             onClick = onExit,
-            modifier = Modifier.fillMaxWidth()
+            shape = CircleShape,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
         ) {
-            Text("Zurück zu Start")
+            Text(
+                text = "Zurück zu Start",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
