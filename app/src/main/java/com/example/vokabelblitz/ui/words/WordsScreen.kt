@@ -54,6 +54,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import kotlin.math.abs
 import com.example.vokabelblitz.R
 import com.example.vokabelblitz.data.Word
 import com.example.vokabelblitz.ui.WordViewModel
@@ -174,24 +176,27 @@ private fun WordCard(
     val direction = dismissState.dismissDirection
     val isThresholdReached = dismissState.targetValue != SwipeToDismissBoxValue.Settled
 
+    // Safely retrieve raw pixel offset from dismissState, defaulting to 0f if uninitialized
+    val rawOffset = try {
+        dismissState.requireOffset()
+    } catch (e: Exception) {
+        0f
+    }
+    
+    // Convert current pixel offset to Dp
+    val swipeOffsetDp = with(LocalDensity.current) { abs(rawOffset).toDp() }
+    
+    // Dynamically expand capsule width with absolute offset, keeping a visual 8.dp margin
+    val capsuleWidth = (swipeOffsetDp - 8.dp).coerceAtLeast(0.dp)
+
     // Dynamic scale spring animation for the delete icon
     val iconScale by animateFloatAsState(
-        targetValue = if (isThresholdReached) 1.4f else 1.0f,
+        targetValue = if (isThresholdReached) 1.4f else if (capsuleWidth < 48.dp) 0f else 1.0f,
         animationSpec = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
         ),
         label = "trash_scale"
-    )
-
-    // Dynamic width spring animation for the separate capsule
-    val capsuleWidth by animateDpAsState(
-        targetValue = if (isThresholdReached) 100.dp else 76.dp,
-        animationSpec = spring(
-            dampingRatio = Spring.DampingRatioMediumBouncy,
-            stiffness = Spring.StiffnessLow
-        ),
-        label = "capsule_width"
     )
 
     SwipeToDismissBox(
