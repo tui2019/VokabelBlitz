@@ -6,4 +6,10 @@
     <color name="widget_icon_tint">#1C1B1F</color>
     <color name="widget_button_bg">#6750A4</color> <!-- Primary light -->
     <color name="widget_button_text">#FFFFFF</color>
+    
+    <!-- Widget M3E button colors (Light fallback) -->
+    <color name="widget_left_button_bg">#EADDFF</color>
+    <color name="widget_left_button_text">#21005D</color>
+    <color name="widget_right_button_bg">#E8DEF8</color>
+    <color name="widget_right_button_text">#1D192B</color>
 </resources>
