@@ -46,6 +46,12 @@ import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import com.example.vokabelblitz.R
 import com.example.vokabelblitz.data.Word
 import com.example.vokabelblitz.ui.WordViewModel
@@ -131,7 +137,7 @@ fun WordsScreen(
             }
         } else {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
                 contentPadding = PaddingValues(bottom = bottomPadding + 16.dp)
             ) {
                 items(
@@ -156,37 +162,56 @@ private fun WordCard(
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
+            if (value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd) {
                 onDelete()
                 true
             } else false
         }
     )
 
+    val direction = dismissState.dismissDirection
+    val isThresholdReached = dismissState.targetValue != SwipeToDismissBoxValue.Settled
+
+    // Dynamic scale spring animation for the delete icon
+    val iconScale by animateFloatAsState(
+        targetValue = if (isThresholdReached) 1.4f else 1.0f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "trash_scale"
+    )
+
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
-            val color by animateColorAsState(
-                targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart)
-                    MaterialTheme.colorScheme.errorContainer
-                else MaterialTheme.colorScheme.surface,
-                label = "dismiss_bg"
-            )
+            // High-fidelity vibrantly colored capsule/pill matching Google Clock app style
+            val backgroundColor = Color(0xFFFF7878) // Coral-red hex
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(color, shape = MaterialTheme.shapes.medium)
-                    .padding(end = 24.dp),
-                contentAlignment = Alignment.CenterEnd
+                    .background(backgroundColor, shape = RoundedCornerShape(24.dp))
+                    .padding(horizontal = 24.dp),
+                contentAlignment = when (direction) {
+                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                    else -> Alignment.Center
+                }
             ) {
-                Icon(
-                    Icons.Default.Delete,
-                    contentDescription = "Löschen",
-                    tint = MaterialTheme.colorScheme.onErrorContainer
-                )
+                if (direction != SwipeToDismissBoxValue.Settled) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Löschen",
+                        tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
+                        modifier = Modifier
+                            .scale(iconScale)
+                            .size(28.dp)
+                    )
+                }
             }
         },
-        enableDismissFromStartToEnd = false,
+        enableDismissFromStartToEnd = true,
+        enableDismissFromEndToStart = true,
         modifier = modifier
     ) {
         Card(
