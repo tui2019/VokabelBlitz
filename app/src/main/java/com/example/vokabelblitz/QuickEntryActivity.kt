@@ -3,6 +3,7 @@ package com.example.vokabelblitz
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
@@ -40,6 +41,7 @@ class QuickEntryActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         translator = GeminiTranslator(application)
 
         setContent {
@@ -119,7 +121,6 @@ fun QuickEntryScreen(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .navigationBarsPadding()
                 .imePadding()
                 .clickable(enabled = false) {}, // Consume clicks inside the card
             shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
@@ -129,7 +130,9 @@ fun QuickEntryScreen(
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
         ) {
             Column(
-                modifier = Modifier.padding(24.dp),
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Header Row
