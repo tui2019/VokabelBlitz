@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WordDao {
-    @Query("SELECT * FROM words ORDER BY addedAt DESC")
+    @Query("SELECT * FROM words ORDER BY addedAt ASC")
     fun getAllWords(): Flow<List<Word>>
 
     @Query("SELECT COUNT(*) FROM words")
