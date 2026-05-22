@@ -32,11 +32,19 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextGeometricTransform
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.vokabelblitz.R
 import com.example.vokabelblitz.data.Word
 import com.example.vokabelblitz.ui.WordViewModel
 import java.text.SimpleDateFormat
@@ -55,19 +63,38 @@ fun WordsScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp)
     ) {
-        // Header
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(
-            text = "Meine Wörter",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 4.dp)
+        // Header (Premium M3E Roboto Flex Typography to match VokabelBlitz)
+        val RobotoFlexFamily = FontFamily(
+            Font(R.font.robotoflex, FontWeight.W900)
         )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                    append("Meine")
+                }
+                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
+                    append("Wörter")
+                }
+            },
+            style = MaterialTheme.typography.displayMedium.copy(
+                fontFamily = RobotoFlexFamily,
+                fontWeight = FontWeight.W900,
+                textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
+            ),
+            letterSpacing = (-3).sp,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center
+        )
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
             text = "${words.size} Wörter in deinem Wortschatz",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            textAlign = TextAlign.Center
         )
 
         if (words.isEmpty()) {
