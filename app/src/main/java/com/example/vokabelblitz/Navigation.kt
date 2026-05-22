@@ -75,10 +75,9 @@ fun MainNavigation() {
             )
         }
         composable("quiz") {
-            DisposableEffect(Unit) {
-                onDispose {
-                    viewModel.endQuiz()
-                }
+            BackHandler {
+                viewModel.endQuiz()
+                navController.popBackStack()
             }
             QuizScreen(
                 viewModel = viewModel,
