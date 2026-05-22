@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Light mode colors -->
+    <color name="widget_background">#F0F1F3</color>
+    <color name="widget_text">#6E7278</color>
+    <color name="widget_icon_tint">#1C1B1F</color>
+    <color name="widget_button_bg">#6750A4</color> <!-- Primary light -->
+    <color name="widget_button_text">#FFFFFF</color>
+</resources>

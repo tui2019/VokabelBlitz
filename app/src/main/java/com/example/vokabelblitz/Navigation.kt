@@ -61,7 +61,10 @@ data class BottomNavItem(
 )
  
 @Composable
-fun MainNavigation() {
+fun MainNavigation(
+    startQuizImmediately: Boolean = false,
+    onQuizStarted: () -> Unit = {}
+) {
     val viewModel: WordViewModel = viewModel()
     val navController = rememberNavController()
 
@@ -73,6 +76,22 @@ fun MainNavigation() {
         navController.addOnDestinationChangedListener(listener)
         onDispose {
             navController.removeOnDestinationChangedListener(listener)
+        }
+    }
+
+    // LaunchedEffect to immediately start quiz when triggered from the widget
+    androidx.compose.runtime.LaunchedEffect(startQuizImmediately) {
+        if (startQuizImmediately) {
+            val currentRoute = navController.currentDestination?.route
+            if (currentRoute == "main") {
+                android.util.Log.d("Navigation", "LaunchedEffect: startQuizImmediately triggered!")
+                viewModel.startQuiz()
+                navController.navigate("quiz")
+                onQuizStarted()
+            } else {
+                android.util.Log.w("Navigation", "LaunchedEffect: Ignored startQuizImmediately because current destination is $currentRoute")
+                onQuizStarted()
+            }
         }
     }
  
