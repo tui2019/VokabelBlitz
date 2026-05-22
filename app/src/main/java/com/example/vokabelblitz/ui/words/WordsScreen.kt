@@ -35,8 +35,14 @@ import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
@@ -167,14 +173,17 @@ private fun WordCard(
     modifier: Modifier = Modifier
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd
-        }
+        positionalThreshold = { totalDistance -> totalDistance * 0.75f }
     )
 
-    LaunchedEffect(dismissState.currentValue) {
-        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart || 
-            dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+    // Track whether the user's finger is currently touching the card
+    var isTouching by remember { mutableStateOf(false) }
+
+    // Only delete after the user releases their finger AND the swipe settled at a dismissed state
+    LaunchedEffect(dismissState.currentValue, isTouching) {
+        if (!isTouching &&
+            (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
+             dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd)) {
             onDelete()
         }
     }
@@ -205,6 +214,19 @@ private fun WordCard(
         label = "trash_scale"
     )
 
+    // Observe touch events without consuming them to track finger up/down
+    Box(
+        modifier = Modifier.pointerInput(Unit) {
+            awaitEachGesture {
+                awaitPointerEvent(pass = PointerEventPass.Initial)
+                isTouching = true
+                do {
+                    val event = awaitPointerEvent(pass = PointerEventPass.Initial)
+                } while (event.changes.any { it.pressed })
+                isTouching = false
+            }
+        }
+    ) {
     SwipeToDismissBox(
         state = dismissState,
         backgroundContent = {
@@ -295,6 +317,7 @@ private fun WordCard(
             }
         }
     }
+    } // Box pointer observer
 }
 
 private fun formatDate(timestamp: Long): String {
