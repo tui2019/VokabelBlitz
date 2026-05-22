@@ -288,13 +288,6 @@ private fun WordCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
                     )
                 }
-                IconButton(onClick = onDelete) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_delete_material_symbols),
-                        contentDescription = "Wort löschen",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                    )
-                }
             }
         }
     }
