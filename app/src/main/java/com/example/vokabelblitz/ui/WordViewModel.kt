@@ -1,6 +1,7 @@
 package com.example.vokabelblitz.ui
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vokabelblitz.ai.GeminiTranslator
@@ -130,12 +131,17 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
 
     // Quiz functions
     fun startQuiz() {
+        Log.d("WordViewModel", "startQuiz called. isReversed: ${_quizState.value.isReversed}")
         viewModelScope.launch {
             val words = wordDao.getAllWordsShuffled()
+            Log.d("WordViewModel", "startQuiz: fetched ${words.size} words from DB")
             if (words.isNotEmpty()) {
                 val previousReversed = _quizState.value.isReversed
                 _quizState.value = QuizState(words = words, isReversed = previousReversed)
                 _isQuizActive.value = true
+                Log.d("WordViewModel", "startQuiz: _quizState updated with new words")
+            } else {
+                Log.w("WordViewModel", "startQuiz: words list from DB is empty!")
             }
         }
     }
@@ -185,6 +191,7 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun endQuiz() {
+        Log.d("WordViewModel", "endQuiz called. Resetting quiz state.")
         _isQuizActive.value = false
         _quizState.value = QuizState()
     }

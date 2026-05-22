@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,25 +64,61 @@ data class BottomNavItem(
 fun MainNavigation() {
     val viewModel: WordViewModel = viewModel()
     val navController = rememberNavController()
+
+    // Add navigation trace logging
+    DisposableEffect(navController) {
+        val listener = androidx.navigation.NavController.OnDestinationChangedListener { _, destination, _ ->
+            android.util.Log.d("Navigation", "Destination changed: ${destination.route}")
+        }
+        navController.addOnDestinationChangedListener(listener)
+        onDispose {
+            navController.removeOnDestinationChangedListener(listener)
+        }
+    }
  
     NavHost(navController = navController, startDestination = "main") {
         composable("main") {
             MainScaffold(
                 viewModel = viewModel,
                 onStartQuiz = {
-                    viewModel.startQuiz()
-                    navController.navigate("quiz")
+                    // Guard against rapid double clicks or navigating while transitioning
+                    val currentRoute = navController.currentDestination?.route
+                    if (currentRoute == "main") {
+                        android.util.Log.d("Navigation", "onStartQuiz: Starting quiz and navigating to quiz screen")
+                        viewModel.startQuiz()
+                        navController.navigate("quiz")
+                    } else {
+                        android.util.Log.w("Navigation", "onStartQuiz: Ignored click because current destination is $currentRoute")
+                    }
                 }
             )
         }
         composable("quiz") {
+            var isExiting by remember { mutableStateOf(false) }
+
             BackHandler {
-                viewModel.endQuiz()
-                navController.popBackStack()
+                if (!isExiting) {
+                    isExiting = true
+                    android.util.Log.d("Navigation", "BackHandler triggered exit from quiz screen")
+                    viewModel.endQuiz()
+                    navController.popBackStack("main", false)
+                } else {
+                    android.util.Log.w("Navigation", "BackHandler: Ignored duplicate exit attempt")
+                }
             }
+
             QuizScreen(
                 viewModel = viewModel,
-                onExit = { navController.popBackStack() },
+                onExit = {
+                    if (!isExiting) {
+                        isExiting = true
+                        android.util.Log.d("Navigation", "onExit triggered from quiz screen")
+                        viewModel.endQuiz()
+                        navController.popBackStack("main", false)
+                    } else {
+                        android.util.Log.w("Navigation", "onExit: Ignored duplicate exit attempt")
+                    }
+                },
                 modifier = Modifier.safeDrawingPadding()
             )
         }

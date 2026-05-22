@@ -66,6 +66,10 @@ fun QuizScreen(
 ) {
     val quizState by viewModel.quizState.collectAsStateWithLifecycle()
 
+    androidx.compose.runtime.LaunchedEffect(quizState) {
+        android.util.Log.d("QuizScreen", "quizState updated: words=${quizState.words.size}, index=${quizState.currentIndex}, isFinished=${quizState.isFinished}")
+    }
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -86,7 +90,6 @@ fun QuizScreen(
                 navigationIcon = {
                     androidx.compose.material3.FilledTonalIconButton(
                         onClick = {
-                            viewModel.endQuiz()
                             onExit()
                         },
                         modifier = Modifier.padding(start = 8.dp),
@@ -128,11 +131,19 @@ fun QuizScreen(
                     learningCount = quizState.learningCount,
                     totalWords = quizState.totalWords,
                     onRestart = { viewModel.startQuiz() },
-                    onExit = {
-                        viewModel.endQuiz()
-                        onExit()
-                    }
+                    onExit = onExit
                 )
+            } else if (quizState.words.isEmpty()) {
+                // Premium Centered Loading Screen
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    androidx.compose.material3.CircularProgressIndicator(
+                        color = MaterialTheme.colorScheme.primary,
+                        strokeWidth = 4.dp
+                    )
+                }
             } else {
                 val currentWord = quizState.currentWord ?: return@Scaffold
 
@@ -160,8 +171,8 @@ fun QuizScreen(
                 )
 
                 // Track current and previous words to prevent translation peeking during flip-back
-                var previousWord by remember { mutableStateOf(currentWord) }
-                var lastWord by remember { mutableStateOf(currentWord) }
+                var previousWord by remember(quizState.words) { mutableStateOf(currentWord) }
+                var lastWord by remember(quizState.words) { mutableStateOf(currentWord) }
 
                 if (currentWord != lastWord) {
                     previousWord = lastWord
