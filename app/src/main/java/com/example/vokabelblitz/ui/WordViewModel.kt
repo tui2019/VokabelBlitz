@@ -157,10 +157,19 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun advanceQuiz(known: Boolean) {
         val current = _quizState.value
+        val currentWord = current.currentWord
+
+        val newWords = if (!known && currentWord != null) {
+            current.words + currentWord
+        } else {
+            current.words
+        }
+
         val nextIndex = current.currentIndex + 1
-        val isFinished = nextIndex >= current.words.size
+        val isFinished = nextIndex >= newWords.size
 
         _quizState.value = current.copy(
+            words = newWords,
             currentIndex = nextIndex,
             isRevealed = false,
             isFinished = isFinished,
