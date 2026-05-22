@@ -142,10 +142,20 @@ fun QuizScreen(
 
                 Spacer(modifier = Modifier.height(32.dp))
 
+                // 3D Card Flip Animation State
+                val rotation by animateFloatAsState(
+                    targetValue = if (quizState.isRevealed) 180f else 0f,
+                    animationSpec = tween(
+                        durationMillis = 500,
+                        easing = androidx.compose.animation.core.FastOutSlowInEasing
+                    ),
+                    label = "cardFlip"
+                )
+
                 // Flashcard
                 Card(
                     colors = CardDefaults.cardColors(
-                        containerColor = if (quizState.isRevealed)
+                        containerColor = if (rotation > 90f)
                             MaterialTheme.colorScheme.primaryContainer
                         else
                             MaterialTheme.colorScheme.surfaceContainerHigh
@@ -153,6 +163,10 @@ fun QuizScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(280.dp)
+                        .graphicsLayer {
+                            rotationY = rotation
+                            cameraDistance = 12f * density
+                        }
                         .clickable(enabled = !quizState.isRevealed) {
                             viewModel.revealAnswer()
                         }
@@ -160,10 +174,15 @@ fun QuizScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .padding(24.dp),
+                            .padding(24.dp)
+                            .graphicsLayer {
+                                if (rotation > 90f) {
+                                    rotationY = 180f
+                                }
+                            },
                         contentAlignment = Alignment.Center
                     ) {
-                        if (!quizState.isRevealed) {
+                        if (rotation <= 90f) {
                             // Front: show word based on direction
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
