@@ -27,6 +27,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingToolbarDefaults
+import androidx.compose.material3.HorizontalFloatingToolbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -85,6 +89,7 @@ fun MainNavigation() {
     }
 }
  
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -118,55 +123,51 @@ private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 ) {
-                    // Floating Navigation Capsule
-                    Surface(
-                        shape = CircleShape,
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        tonalElevation = 6.dp,
-                        shadowElevation = 8.dp,
+                    // Floating Navigation Toolbar (M3 Expressive)
+                    HorizontalFloatingToolbar(
+                        expanded = true,
+                        colors = FloatingToolbarDefaults.standardFloatingToolbarColors(
+                            toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
                         modifier = Modifier.wrapContentSize()
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
-                        ) {
-                            navItems.forEachIndexed { index, item ->
-                                val isSelected = selectedTab == index
-                                Box(
-                                    modifier = Modifier
-                                        .clip(CircleShape)
-                                        .background(
-                                            if (isSelected) MaterialTheme.colorScheme.secondaryContainer 
-                                            else Color.Transparent
-                                        )
-                                        .clickable { selectedTab = index }
-                                        .animateContentSize()
+                        navItems.forEachIndexed { index, item ->
+                            val isSelected = selectedTab == index
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (isSelected) MaterialTheme.colorScheme.secondaryContainer 
+                                        else Color.Transparent
+                                    )
+                                    .clickable { selectedTab = index }
+                                    .animateContentSize()
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
                                 ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
-                                    ) {
-                                        if (isSelected) {
-                                            Icon(
-                                                imageVector = item.selectedIcon,
-                                                contentDescription = item.label,
-                                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
-                                                modifier = Modifier.size(20.dp)
-                                            )
-                                            Spacer(modifier = Modifier.width(8.dp))
-                                        }
-                                        Text(
-                                            text = item.label,
-                                            style = MaterialTheme.typography.labelLarge,
-                                            fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                            color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer 
-                                                    else MaterialTheme.colorScheme.onSurfaceVariant
+                                    if (isSelected) {
+                                        Icon(
+                                            imageVector = item.selectedIcon,
+                                            contentDescription = item.label,
+                                            tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                                            modifier = Modifier.size(20.dp)
                                         )
+                                        Spacer(modifier = Modifier.width(8.dp))
                                     }
+                                    Text(
+                                        text = item.label,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                        color = if (isSelected) MaterialTheme.colorScheme.onSecondaryContainer 
+                                                else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
                                 }
-                                if (index < navItems.size - 1) {
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                }
+                            }
+                            if (index < navItems.size - 1) {
+                                Spacer(modifier = Modifier.width(4.dp))
                             }
                         }
                     }
