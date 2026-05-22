@@ -106,7 +106,6 @@ fun WordsScreen(
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .navigationBarsPadding()
                     .padding(bottom = bottomPadding + 8.dp)
             )
         },
