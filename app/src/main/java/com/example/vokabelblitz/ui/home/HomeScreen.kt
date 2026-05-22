@@ -60,7 +60,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.vokabelblitz.ai.ModelStatus
 import com.example.vokabelblitz.ui.TranslationState
 import com.example.vokabelblitz.ui.WordViewModel
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun HomeScreen(
     viewModel: WordViewModel,
@@ -231,10 +234,9 @@ fun HomeScreen(
                 )
             ) {
                 if (isTranslating) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(24.dp),
-                        color = MaterialTheme.colorScheme.onSecondary,
-                        strokeWidth = 2.5.dp
+                    LoadingIndicator(
+                        modifier = Modifier.size(28.dp),
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                 } else {
                     Icon(
