@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LibraryBooks
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -186,8 +187,8 @@ private fun WordCard(
     // Convert current pixel offset to Dp
     val swipeOffsetDp = with(LocalDensity.current) { abs(rawOffset).toDp() }
     
-    // Dynamically expand capsule width with absolute offset, keeping a visual 8.dp margin
-    val capsuleWidth = (swipeOffsetDp - 8.dp).coerceAtLeast(0.dp)
+    // Dynamically expand capsule width with absolute offset, keeping a visual 4.dp margin
+    val capsuleWidth = (swipeOffsetDp - 4.dp).coerceAtLeast(0.dp)
 
     // Dynamic scale spring animation for the delete icon
     val iconScale by animateFloatAsState(
@@ -223,7 +224,7 @@ private fun WordCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Delete,
+                            imageVector = Icons.Outlined.Delete, // Modern outlined M3 delete icon
                             contentDescription = "Löschen",
                             tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
                             modifier = Modifier
@@ -288,7 +289,7 @@ private fun WordCard(
                 }
                 IconButton(onClick = onDelete) {
                     Icon(
-                        Icons.Default.Delete,
+                        Icons.Outlined.Delete, // Modern outlined M3 delete icon
                         contentDescription = "Wort löschen",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
