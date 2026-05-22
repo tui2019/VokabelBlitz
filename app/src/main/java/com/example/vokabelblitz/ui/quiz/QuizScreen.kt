@@ -255,8 +255,8 @@ fun QuizScreen(
                             onClick = { viewModel.markLearning() },
                             shape = RoundedCornerShape(24.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.tertiary,
-                                contentColor = MaterialTheme.colorScheme.onTertiary
+                                containerColor = MaterialTheme.colorScheme.onTertiary,
+                                contentColor = MaterialTheme.colorScheme.tertiary
                             ),
                             modifier = Modifier
                                 .weight(1f)
