@@ -22,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LibraryBooks
+import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -224,7 +225,7 @@ private fun WordCard(
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Delete, // Modern outlined M3 delete icon
+                            painter = painterResource(id = R.drawable.ic_delete_material_symbols),
                             contentDescription = "Löschen",
                             tint = Color(0xFF2C0B0E), // High contrast dark tone for delete icon
                             modifier = Modifier
@@ -289,7 +290,7 @@ private fun WordCard(
                 }
                 IconButton(onClick = onDelete) {
                     Icon(
-                        Icons.Outlined.Delete, // Modern outlined M3 delete icon
+                        painter = painterResource(id = R.drawable.ic_delete_material_symbols),
                         contentDescription = "Wort löschen",
                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                     )
