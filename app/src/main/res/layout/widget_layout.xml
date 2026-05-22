@@ -7,69 +7,41 @@
     android:padding="8dp">
 
     <!-- Left Button: Add Word (Schnelleingabe) -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/widget_input_area"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:background="@drawable/widget_left_button_bg_shape"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
         android:clickable="true"
         android:focusable="true">
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
             android:src="@drawable/ic_add_word"
             android:contentDescription="Schnelleingabe"
             android:tint="@color/widget_left_button_text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Wort +"
-            android:textColor="@color/widget_left_button_text"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:ellipsize="end" />
-    </LinearLayout>
+    </FrameLayout>
 
     <!-- Right Button: Play Quiz -->
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/widget_quiz_button"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:layout_marginStart="12dp"
         android:background="@drawable/widget_right_button_bg_shape"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
         android:clickable="true"
         android:focusable="true">
 
         <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_gravity="center"
             android:src="@drawable/ic_play_quiz"
             android:contentDescription="Quiz starten"
             android:tint="@color/widget_right_button_text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="Quiz"
-            android:textColor="@color/widget_right_button_text"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:singleLine="true"
-            android:ellipsize="end" />
-    </LinearLayout>
+    </FrameLayout>
 </LinearLayout>
