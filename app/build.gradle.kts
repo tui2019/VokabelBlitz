@@ -6,10 +6,10 @@ plugins {
 }
 
 android {
-    namespace = "com.example.vokabelblitz"
+    namespace = "de.vokabelblitz"
     compileSdk = 37
     defaultConfig {
-        applicationId = "com.example.vokabelblitz"
+        applicationId = "de.vokabelblitz"
         minSdk = 31
         targetSdk = 37
         versionCode = 1
