@@ -86,7 +86,8 @@ fun QuizScreen(
                         IconButton(onClick = { viewModel.toggleQuizLanguage() }) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_swap_languages),
-                                contentDescription = "Sprachrichtung umkehren"
+                                contentDescription = "Sprachrichtung umkehren",
+                                tint = MaterialTheme.colorScheme.onSurface
                             )
                         }
                     }
