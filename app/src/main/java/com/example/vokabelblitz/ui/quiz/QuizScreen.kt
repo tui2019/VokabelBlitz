@@ -470,8 +470,6 @@ fun QuizScreen(
                             verticalArrangement = Arrangement.Center,
                             modifier = Modifier
                                 .graphicsLayer { alpha = revealAlpha }
-                                // Make it non-interactive to let click events pass to the buttons below
-                                .clickable(enabled = false) {}
                         ) {
                             Icon(
                                 Icons.Default.Visibility,
