@@ -209,69 +209,62 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.width(10.dp))
 
+            val isTranslating = translationState is TranslationState.Translating
+
             // Send / Add Word button (Expressive morphing shape)
             FilledIconButton(
                 onClick = { viewModel.translateWord() },
-                enabled = inputWord.isNotBlank() && translationState !is TranslationState.Translating,
+                enabled = inputWord.isNotBlank() && !isTranslating,
                 shape = RoundedCornerShape(buttonCornerSize),
                 modifier = Modifier.size(64.dp),
                 colors = IconButtonDefaults.filledIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondary,
                     contentColor = MaterialTheme.colorScheme.onSecondary,
-                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    disabledContentColor = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                    disabledContainerColor = if (isTranslating)
+                        MaterialTheme.colorScheme.secondary
+                    else
+                        MaterialTheme.colorScheme.surfaceContainerHighest,
+                    disabledContentColor = if (isTranslating)
+                        MaterialTheme.colorScheme.onSecondary
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                 )
             ) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Rounded.Send,
-                    contentDescription = "Add Word",
-                    modifier = Modifier.size(24.dp)
-                )
+                if (isTranslating) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(24.dp),
+                        color = MaterialTheme.colorScheme.onSecondary,
+                        strokeWidth = 2.5.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.Send,
+                        contentDescription = "Wort hinzufügen",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Inline status/loading/error area
+        // Inline error area (Loading card removed as it's now integrated inside the button)
         AnimatedVisibility(
-            visible = translationState !is TranslationState.Idle,
+            visible = translationState is TranslationState.Error,
             enter = fadeIn() + slideInVertically { it / 2 },
             exit = fadeOut()
         ) {
-            when (translationState) {
-                is TranslationState.Translating -> {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            CircularProgressIndicator()
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                "Übersetzen & Speichern mit Gemini Nano...",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-                is TranslationState.Error -> {
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.errorContainer
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = (translationState as TranslationState.Error).message,
-                            modifier = Modifier.padding(16.dp),
-                            color = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                    }
-                }
-                else -> {}
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = (translationState as TranslationState.Error).message,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onErrorContainer
+                )
             }
         }
 
