@@ -19,8 +19,9 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.ui.res.painterResource
+import com.example.vokabelblitz.R
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -84,7 +85,7 @@ fun QuizScreen(
                     if (!quizState.isFinished) {
                         IconButton(onClick = { viewModel.toggleQuizLanguage() }) {
                             Icon(
-                                imageVector = Icons.Default.SwapHoriz,
+                                painter = painterResource(id = R.drawable.ic_swap_languages),
                                 contentDescription = "Sprachrichtung umkehren"
                             )
                         }
