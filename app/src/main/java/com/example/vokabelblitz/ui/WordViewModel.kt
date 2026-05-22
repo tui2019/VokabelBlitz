@@ -48,8 +48,8 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
     private val translator = GeminiTranslator(application)
 
     // All words from the database, observed reactively
-    val allWords: StateFlow<List<Word>> = wordDao.getAllWords()
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+    val allWords: StateFlow<List<Word>?> = wordDao.getAllWords()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val wordCount: StateFlow<Int> = wordDao.getWordCount()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)

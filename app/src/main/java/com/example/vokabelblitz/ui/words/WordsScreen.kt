@@ -37,6 +37,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
@@ -86,6 +88,7 @@ import java.util.Locale
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun WordsScreen(
     viewModel: WordViewModel,
@@ -141,7 +144,7 @@ fun WordsScreen(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "${words.size} Wörter in deinem Wortschatz",
+                text = "${words?.size ?: 0} Wörter in deinem Wortschatz",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier
@@ -150,7 +153,21 @@ fun WordsScreen(
                 textAlign = TextAlign.Center
             )
 
-            if (words.isEmpty()) {
+            val wordsList = words
+            if (wordsList == null) {
+                // Loading state
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = bottomPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    LoadingIndicator(
+                        modifier = Modifier.size(36.dp),
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            } else if (wordsList.isEmpty()) {
                 // Empty state
                 Box(
                     modifier = Modifier
@@ -185,7 +202,7 @@ fun WordsScreen(
                     contentPadding = PaddingValues(bottom = bottomPadding + 16.dp)
                 ) {
                     items(
-                        items = words,
+                        items = wordsList,
                         key = { it.id }
                     ) { word ->
                         key(word.id, restoredGenerations[word.id] ?: 0) {
