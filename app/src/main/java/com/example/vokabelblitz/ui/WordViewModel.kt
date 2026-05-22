@@ -122,6 +122,12 @@ class WordViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun restoreWord(word: Word) {
+        viewModelScope.launch {
+            wordDao.insert(word)
+        }
+    }
+
     // Quiz functions
     fun startQuiz() {
         viewModelScope.launch {
