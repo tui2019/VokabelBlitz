@@ -235,7 +235,7 @@ fun HomeScreen(
             ) {
                 if (isTranslating) {
                     LoadingIndicator(
-                        modifier = Modifier.size(28.dp),
+                        modifier = Modifier.size(36.dp),
                         color = MaterialTheme.colorScheme.onSecondary
                     )
                 } else {
