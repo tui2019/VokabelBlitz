@@ -3,6 +3,11 @@ package com.example.vokabelblitz
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -83,6 +88,7 @@ sealed class QuickEntryState {
     data class Error(val message: String) : QuickEntryState()
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun QuickEntryScreen(
     onDismiss: () -> Unit,
@@ -91,6 +97,11 @@ fun QuickEntryScreen(
     var text by remember { mutableStateOf("") }
     var state by remember { mutableStateOf<QuickEntryState>(QuickEntryState.Idle) }
     val focusRequester = remember { FocusRequester() }
+
+    val buttonCornerSize by animateDpAsState(
+        targetValue = if (text.isNotBlank()) 16.dp else 32.dp,
+        label = "SendButtonCornerSize"
+    )
 
     // Request focus and open keyboard immediately when UI is ready
     LaunchedEffect(Unit) {
@@ -183,19 +194,38 @@ fun QuickEntryScreen(
                                 singleLine = true,
                                 shape = CircleShape,
                                 colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                                     focusedIndicatorColor = Color.Transparent,
                                     unfocusedIndicatorColor = Color.Transparent,
+                                    disabledIndicatorColor = Color.Transparent,
+                                    errorIndicatorColor = Color.Transparent,
                                     cursorColor = MaterialTheme.colorScheme.primary
                                 ),
+                                trailingIcon = {
+                                    if (text.isNotBlank()) {
+                                        IconButton(onClick = {
+                                            text = ""
+                                            if (state is QuickEntryState.Error) {
+                                                state = QuickEntryState.Idle
+                                            }
+                                        }) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = "Clear",
+                                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                            )
+                                        }
+                                    }
+                                },
                                 modifier = Modifier
                                     .weight(1f)
-                                    .height(56.dp)
+                                    .height(64.dp)
                                     .focusRequester(focusRequester)
                             )
 
-                            Spacer(modifier = Modifier.width(8.dp))
+                            Spacer(modifier = Modifier.width(10.dp))
 
                             val isTranslating = state is QuickEntryState.Translating
 
@@ -206,39 +236,65 @@ fun QuickEntryScreen(
                                     }
                                 },
                                 enabled = text.isNotBlank() && !isTranslating,
-                                shape = CircleShape,
-                                modifier = Modifier.size(56.dp),
+                                shape = RoundedCornerShape(buttonCornerSize),
+                                modifier = Modifier.size(64.dp),
                                 colors = IconButtonDefaults.filledIconButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                                    disabledContainerColor = if (isTranslating)
+                                        MaterialTheme.colorScheme.secondary
+                                    else
+                                        MaterialTheme.colorScheme.surfaceContainerHighest,
+                                    disabledContentColor = if (isTranslating)
+                                        MaterialTheme.colorScheme.onSecondary
+                                    else
+                                        MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
                                 )
                             ) {
                                 if (isTranslating) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary,
-                                        strokeWidth = 2.dp
+                                    LoadingIndicator(
+                                        modifier = Modifier.size(36.dp),
+                                        color = MaterialTheme.colorScheme.onSecondary
                                     )
                                 } else {
                                     Icon(
-                                        Icons.AutoMirrored.Rounded.Send,
+                                        imageVector = Icons.AutoMirrored.Rounded.Send,
                                         contentDescription = "Senden",
-                                        modifier = Modifier.size(20.dp)
+                                        modifier = Modifier.size(24.dp)
                                     )
                                 }
                             }
                         }
 
-                        // Error State
-                        if (state is QuickEntryState.Error) {
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = (state as QuickEntryState.Error).message,
-                                color = MaterialTheme.colorScheme.error,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Start
-                            )
+                        // Error State using AnimatedVisibility & Card
+                        val errorState = state as? QuickEntryState.Error
+                        val errorMessage = errorState?.message
+                        var lastErrorMessage by remember { mutableStateOf("") }
+                        if (errorMessage != null) {
+                            lastErrorMessage = errorMessage
+                        }
+
+                        AnimatedVisibility(
+                            visible = errorState != null,
+                            enter = fadeIn() + slideInVertically { it / 2 },
+                            exit = fadeOut()
+                        ) {
+                            Column {
+                                Spacer(modifier = Modifier.height(12.dp))
+                                Card(
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = MaterialTheme.colorScheme.errorContainer
+                                    ),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = lastErrorMessage,
+                                        modifier = Modifier.padding(12.dp),
+                                        color = MaterialTheme.colorScheme.onErrorContainer,
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                            }
                         }
                     }
                 }
