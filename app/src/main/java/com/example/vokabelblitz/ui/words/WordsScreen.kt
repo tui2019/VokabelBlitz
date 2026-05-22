@@ -168,12 +168,16 @@ private fun WordCard(
 ) {
     val dismissState = rememberSwipeToDismissBoxState(
         confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd) {
-                onDelete()
-                true
-            } else false
+            value == SwipeToDismissBoxValue.EndToStart || value == SwipeToDismissBoxValue.StartToEnd
         }
     )
+
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart || 
+            dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd) {
+            onDelete()
+        }
+    }
 
     val direction = dismissState.dismissDirection
     val isThresholdReached = dismissState.targetValue != SwipeToDismissBoxValue.Settled
