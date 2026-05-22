@@ -2,14 +2,18 @@ package com.example.vokabelblitz.ui.quiz
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -251,22 +255,217 @@ fun QuizScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                if (!quizState.isRevealed) {
-                    // Show reveal button
-                    FilledTonalButton(
-                        onClick = { viewModel.revealAnswer() },
-                        shape = RoundedCornerShape(24.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(112.dp)
+                // Premium Button Morphing & Splitting Animation States - Fluidly Synchronized
+                // Physical Split (gap, corners) and Background Colors all transition in parallel (t = 0 to 300ms)
+                // Texts/icons fade in with a tiny delay (t = 100 to 300ms) to ensure text renders inside a split button
+                val gapSpacing by animateDpAsState(
+                    targetValue = if (quizState.isRevealed) 6.dp else 0.dp,
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = androidx.compose.animation.core.FastOutSlowInEasing
+                    ),
+                    label = "gapSpacing"
+                )
+
+                // Corner radius of touching inner edges.
+                // Unrevealed: 0.dp (completely flat touching seam).
+                // Revealed: 24.dp (squircles separating).
+                val innerCornerRadius by animateDpAsState(
+                    targetValue = if (quizState.isRevealed) 24.dp else 0.dp,
+                    animationSpec = tween(
+                        durationMillis = 300,
+                        easing = androidx.compose.animation.core.FastOutSlowInEasing
+                    ),
+                    label = "innerCornerRadius"
+                )
+
+                // Weights: Constant 1:2 split so the physical seam is pre-allocated at the 1/3 and 2/3 mark.
+                // This makes the cell-split transition significantly smoother as no layout resizing or weight
+                // recalculations occur—the button simply parts organically exactly where it stands.
+                val leftWeight = 1f
+                val rightWeight = 2f
+
+                // Background & Content Colors for the Left Button
+                val leftContainerColor by animateColorAsState(
+                    targetValue = if (quizState.isRevealed)
+                        MaterialTheme.colorScheme.onTertiary
+                    else
+                        MaterialTheme.colorScheme.secondaryContainer,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "leftContainerColor"
+                )
+                val leftContentColor by animateColorAsState(
+                    targetValue = if (quizState.isRevealed)
+                        MaterialTheme.colorScheme.tertiary
+                    else
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "leftContentColor"
+                )
+
+                // Background & Content Colors for the Right Button
+                val rightContainerColor by animateColorAsState(
+                    targetValue = if (quizState.isRevealed)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.secondaryContainer,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "rightContainerColor"
+                )
+                val rightContentColor by animateColorAsState(
+                    targetValue = if (quizState.isRevealed)
+                        MaterialTheme.colorScheme.onPrimary
+                    else
+                        MaterialTheme.colorScheme.onSecondaryContainer,
+                    animationSpec = tween(durationMillis = 300),
+                    label = "rightContentColor"
+                )
+
+                // Content Alpha for "Antwort anzeigen" Overlay
+                val revealAlpha by animateFloatAsState(
+                    targetValue = if (quizState.isRevealed) 0f else 1f,
+                    animationSpec = tween(
+                        durationMillis = 150,
+                        delayMillis = if (quizState.isRevealed) 0 else 150
+                    ),
+                    label = "revealAlpha"
+                )
+
+                // Content Alphas for "Lerne noch" and "Kann ich!"
+                val leftContentAlpha by animateFloatAsState(
+                    targetValue = if (quizState.isRevealed) 1f else 0f,
+                    animationSpec = tween(
+                        durationMillis = 200,
+                        delayMillis = if (quizState.isRevealed) 100 else 0
+                    ),
+                    label = "leftContentAlpha"
+                )
+                val rightContentAlpha by animateFloatAsState(
+                    targetValue = if (quizState.isRevealed) 1f else 0f,
+                    animationSpec = tween(
+                        durationMillis = 200,
+                        delayMillis = if (quizState.isRevealed) 100 else 0
+                    ),
+                    label = "rightContentAlpha"
+                )
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(112.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalArrangement = Arrangement.spacedBy(gapSpacing)
                     ) {
+                        // Left Button (Lerne noch / Left half of Antwort anzeigen)
+                        Button(
+                            onClick = {
+                                if (quizState.isRevealed) {
+                                    viewModel.markLearning()
+                                } else {
+                                    viewModel.revealAnswer()
+                                }
+                            },
+                            shape = RoundedCornerShape(
+                                topStart = 24.dp,
+                                bottomStart = 24.dp,
+                                topEnd = innerCornerRadius,
+                                bottomEnd = innerCornerRadius
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = leftContainerColor,
+                                contentColor = leftContentColor
+                            ),
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier
+                                .weight(leftWeight)
+                                .fillMaxHeight()
+                        ) {
+                            if (leftContentAlpha > 0.01f) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.graphicsLayer { alpha = leftContentAlpha }
+                                ) {
+                                    Icon(
+                                        Icons.Default.Refresh,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = "Lerne noch",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+
+                        // Right Button (Kann ich! / Right half of Antwort anzeigen)
+                        Button(
+                            onClick = {
+                                if (quizState.isRevealed) {
+                                    viewModel.markKnown()
+                                } else {
+                                    viewModel.revealAnswer()
+                                }
+                            },
+                            shape = RoundedCornerShape(
+                                topStart = innerCornerRadius,
+                                bottomStart = innerCornerRadius,
+                                topEnd = 24.dp,
+                                bottomEnd = 24.dp
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = rightContainerColor,
+                                contentColor = rightContentColor
+                            ),
+                            contentPadding = PaddingValues(0.dp),
+                            modifier = Modifier
+                                .weight(rightWeight)
+                                .fillMaxHeight()
+                        ) {
+                            if (rightContentAlpha > 0.01f) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.graphicsLayer { alpha = rightContentAlpha }
+                                ) {
+                                    Icon(
+                                        Icons.Default.CheckCircle,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(6.dp))
+                                    Text(
+                                        text = "Kann ich!",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        fontWeight = FontWeight.Bold,
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    // Floating Centered Overlay: "Antwort anzeigen"
+                    if (revealAlpha > 0.01f) {
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                            verticalArrangement = Arrangement.Center,
+                            modifier = Modifier
+                                .graphicsLayer { alpha = revealAlpha }
+                                // Make it non-interactive to let click events pass to the buttons below
+                                .clickable(enabled = false) {}
                         ) {
                             Icon(
                                 Icons.Default.Visibility,
                                 contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSecondaryContainer,
                                 modifier = Modifier.size(28.dp)
                             )
                             Spacer(modifier = Modifier.height(6.dp))
@@ -274,73 +473,9 @@ fun QuizScreen(
                                 text = "Antwort anzeigen",
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSecondaryContainer,
                                 textAlign = TextAlign.Center
                             )
-                        }
-                    }
-                } else {
-                    // Know it / Still learning buttons
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Button(
-                            onClick = { viewModel.markLearning() },
-                            shape = RoundedCornerShape(24.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onTertiary,
-                                contentColor = MaterialTheme.colorScheme.tertiary
-                            ),
-                            modifier = Modifier
-                                .weight(1f)
-                                .height(112.dp)
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.Refresh,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = "Lerne noch",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
-                        }
-                        Button(
-                            onClick = { viewModel.markKnown() },
-                            shape = RoundedCornerShape(24.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                contentColor = MaterialTheme.colorScheme.onPrimary
-                            ),
-                            modifier = Modifier
-                                .weight(2f)
-                                .height(112.dp)
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                Icon(
-                                    Icons.Default.CheckCircle,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(28.dp)
-                                )
-                                Spacer(modifier = Modifier.height(6.dp))
-                                Text(
-                                    text = "Kann ich!",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center
-                                )
-                            }
                         }
                     }
                 }
