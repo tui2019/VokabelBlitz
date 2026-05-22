@@ -147,6 +147,8 @@ Analyze the German input word or phrase: "$word"
 
 First, determine its primary part of speech. Then, format the German word/phrase and translate it strictly according to these rules:
 
+STRICT WORD FIDELITY: Under NO circumstances should you replace the input German word/phrase with a synonym or different word (for example, do NOT replace "spüren" or "spueren" with "fühlen"). You must retain the exact original input word, only adjusting its casing, formatting, or correcting spelling/transcription if it is misspelled (e.g. converting "spueren" to "spüren"). If the word is already spelled correctly, keep it exactly as is.
+
 1. VERBS: If the input is primarily a German verb in its infinitive form (e.g., "spielen", "laufen", "kochen", "gehen", "sehen", "arbeiten", "essen"):
    - Keep it strictly in its lowercase infinitive form (e.g., "spielen").
    - DO NOT capitalize the first letter.
