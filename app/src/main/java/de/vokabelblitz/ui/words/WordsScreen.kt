@@ -322,9 +322,7 @@ private fun WordCard(
         backgroundContent = {
             val showBackground = direction != SwipeToDismissBoxValue.Settled || isShrinking
             if (showBackground) {
-                val isDismissed = dismissState.currentValue == SwipeToDismissBoxValue.EndToStart ||
-                                 dismissState.currentValue == SwipeToDismissBoxValue.StartToEnd ||
-                                 isShrinking
+                val isDismissed = isShrinking
 
                 val alignment = when {
                     isShrinking -> Alignment.Center
