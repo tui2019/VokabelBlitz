@@ -171,10 +171,13 @@ fun QuizScreen(
                 )
 
                 // Track current and previous words to prevent translation peeking during flip-back
-                var previousWord by remember(quizState.words) { mutableStateOf(currentWord) }
-                var lastWord by remember(quizState.words) { mutableStateOf(currentWord) }
+                var previousWord by remember { mutableStateOf(currentWord) }
+                var lastWord by remember { mutableStateOf(currentWord) }
 
-                if (currentWord != lastWord) {
+                if (quizState.currentIndex == 0) {
+                    previousWord = currentWord
+                    lastWord = currentWord
+                } else if (currentWord != lastWord) {
                     previousWord = lastWord
                     lastWord = currentWord
                 }
