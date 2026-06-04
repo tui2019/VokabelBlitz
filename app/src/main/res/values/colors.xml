@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Light mode colors -->
-    <color name="app_background">#12131A</color>
+    <color name="app_background">#F0F1F3</color>
     <color name="widget_background">#F0F1F3</color>
     <color name="widget_text">#6E7278</color>
     <color name="widget_icon_tint">#1C1B1F</color>
