@@ -41,6 +41,8 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -109,55 +111,22 @@ fun WordsScreen(
                     .padding(bottom = bottomPadding - 16.dp)
             )
         },
+        contentWindowInsets = WindowInsets(0.dp),
         containerColor = Color.Transparent,
         modifier = modifier.fillMaxSize()
     ) { localPadding ->
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp)
                 .padding(localPadding)
         ) {
-            // Header (Premium M3E Roboto Flex Typography to match VokabelBlitz)
-            val RobotoFlexFamily = FontFamily(
-                Font(R.font.robotoflex, FontWeight.W900)
-            )
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                        append("Meine")
-                    }
-                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
-                        append("Wörter")
-                    }
-                },
-                style = MaterialTheme.typography.displayMedium.copy(
-                    fontFamily = RobotoFlexFamily,
-                    fontWeight = FontWeight.W900,
-                    textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
-                ),
-                letterSpacing = (-3).sp,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "${words?.size ?: 0} Wörter in deinem Wortschatz",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                textAlign = TextAlign.Center
-            )
-
             val wordsList = words
             if (wordsList == null) {
-                // Loading state
+                // Loading state (centered with status bar padding offset)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .statusBarsPadding()
                         .padding(bottom = bottomPadding),
                     contentAlignment = Alignment.Center
                 ) {
@@ -166,65 +135,117 @@ fun WordsScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                 }
-            } else if (wordsList.isEmpty()) {
-                // Empty state
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = bottomPadding),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            Icons.Outlined.LibraryBooks,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Noch keine Wörter",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            text = "Gehe zum Reiter 'Lernen', um dein erstes Wort hinzuzufügen!",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
             } else {
                 LazyColumn(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
-                    contentPadding = PaddingValues(bottom = bottomPadding + 16.dp)
+                    contentPadding = PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 0.dp,
+                        bottom = bottomPadding + 16.dp
+                    ),
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    items(
-                        items = wordsList,
-                        key = { it.id }
-                    ) { word ->
-                        key(word.id, restoredGenerations[word.id] ?: 0) {
-                            WordCard(
-                                word = word,
-                                onDelete = {
-                                    viewModel.deleteWord(word)
-                                    currentSnackbarJob?.cancel()
-                                    currentSnackbarJob = scope.launch {
-                                        snackbarHostState.currentSnackbarData?.dismiss()
-                                        val result = snackbarHostState.showSnackbar(
-                                            message = "Wort '${word.germanWord}' gelöscht",
-                                            actionLabel = "Rückgängig",
-                                            duration = SnackbarDuration.Short
-                                        )
-                                        if (result == SnackbarResult.ActionPerformed) {
-                                            restoredGenerations[word.id] = (restoredGenerations[word.id] ?: 0) + 1
-                                            viewModel.restoreWord(word)
-                                        }
+                    item {
+                        // Header (Premium M3E Roboto Flex Typography to match VokabelBlitz)
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .statusBarsPadding()
+                                .padding(bottom = 16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            val RobotoFlexFamily = FontFamily(
+                                Font(R.font.robotoflex, FontWeight.W900)
+                            )
+                            Spacer(modifier = Modifier.height(32.dp))
+                            Text(
+                                text = buildAnnotatedString {
+                                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                                        append("Meine")
+                                    }
+                                    withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.tertiary)) {
+                                        append("Wörter")
                                     }
                                 },
-                                modifier = Modifier.animateItem()
+                                style = MaterialTheme.typography.displayMedium.copy(
+                                    fontFamily = RobotoFlexFamily,
+                                    fontWeight = FontWeight.W900,
+                                    textGeometricTransform = TextGeometricTransform(scaleX = 1.4f)
+                                ),
+                                letterSpacing = (-3).sp,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
                             )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = "${wordsList.size} Wörter in deinem Wortschatz",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    }
+
+                    if (wordsList.isEmpty()) {
+                        item {
+                            // Empty state inside the list
+                            Box(
+                                modifier = Modifier
+                                    .fillParentMaxHeight(0.7f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        Icons.Outlined.LibraryBooks,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(64.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(
+                                        text = "Noch keine Wörter",
+                                        style = MaterialTheme.typography.titleMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                    Text(
+                                        text = "Gehe zum Reiter 'Lernen', um dein erstes Wort hinzuzufügen!",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                                        textAlign = TextAlign.Center
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        items(
+                            items = wordsList,
+                            key = { it.id }
+                        ) { word ->
+                            key(word.id, restoredGenerations[word.id] ?: 0) {
+                                WordCard(
+                                    word = word,
+                                    onDelete = {
+                                        viewModel.deleteWord(word)
+                                        currentSnackbarJob?.cancel()
+                                        currentSnackbarJob = scope.launch {
+                                            snackbarHostState.currentSnackbarData?.dismiss()
+                                            val result = snackbarHostState.showSnackbar(
+                                                message = "Wort '${word.germanWord}' gelöscht",
+                                                actionLabel = "Rückgängig",
+                                                duration = SnackbarDuration.Short
+                                            )
+                                            if (result == SnackbarResult.ActionPerformed) {
+                                                restoredGenerations[word.id] = (restoredGenerations[word.id] ?: 0) + 1
+                                                viewModel.restoreWord(word)
+                                            }
+                                        }
+                                    },
+                                    modifier = Modifier.animateItem()
+                                )
+                            }
                         }
                     }
                 }
