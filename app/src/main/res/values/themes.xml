@@ -2,12 +2,12 @@
 <resources>
 
     <style name="Theme.VokabelBlitz" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">#12131A</item>
-        <item name="android:windowSplashScreenBackground">#12131A</item>
-        <item name="android:statusBarColor">#12131A</item>
-        <item name="android:navigationBarColor">#12131A</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:statusBarColor">@color/splash_background</item>
+        <item name="android:navigationBarColor">@color/splash_background</item>
+        <item name="android:windowLightStatusBar">@bool/splash_light_status_bar</item>
+        <item name="android:windowLightNavigationBar">@bool/splash_light_status_bar</item>
     </style>
 
     <style name="Theme.VokabelBlitz.Dialog" parent="android:Theme.Material.Light.NoActionBar">

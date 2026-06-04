@@ -2,6 +2,7 @@
 <resources>
     <!-- Widget M3E button colors (Android 12+ Light Monet) -->
     <color name="app_background">@android:color/system_accent2_50</color>
+    <color name="splash_background">@android:color/system_neutral1_10</color>
     <color name="widget_left_button_bg">@android:color/system_accent1_100</color>
     <color name="widget_left_button_text">@android:color/system_accent1_900</color>
     <color name="widget_right_button_bg">@android:color/system_accent3_100</color>

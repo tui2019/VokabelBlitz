@@ -2,6 +2,7 @@
 <resources>
     <!-- Dark mode colors -->
     <color name="app_background">#12131A</color>
+    <color name="splash_background">#12131A</color>
     <color name="widget_background">#1C1B1F</color>
     <color name="widget_text">#C9C5D0</color>
     <color name="widget_icon_tint">#E6E1E5</color>
@@ -9,8 +10,8 @@
     <color name="widget_button_text">#381E72</color>
 
     <!-- Widget M3E button colors (Dark fallback) -->
-    <color name="widget_left_button_bg">#4F378B</color>
-    <color name="widget_left_button_text">#EADDFF</color>
+    <color name="widget_left_button_bg">#EADDFF</color>
+    <color name="widget_left_button_text">#4F378B</color>
     <color name="widget_right_button_bg">#4A4458</color>
     <color name="widget_right_button_text">#E8DEF8</color>
 </resources>
