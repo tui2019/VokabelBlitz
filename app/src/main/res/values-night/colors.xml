@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Dark mode colors -->
+    <color name="app_background">#12131A</color>
     <color name="widget_background">#1C1B1F</color>
     <color name="widget_text">#C9C5D0</color>
     <color name="widget_icon_tint">#E6E1E5</color>
