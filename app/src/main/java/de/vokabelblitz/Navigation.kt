@@ -115,14 +115,12 @@ fun MainNavigation(
         composable("quiz") {
             var isExiting by remember { mutableStateOf(false) }
 
-            BackHandler {
-                if (!isExiting) {
-                    isExiting = true
-                    android.util.Log.d("Navigation", "BackHandler triggered exit from quiz screen")
-                    viewModel.endQuiz()
-                    navController.popBackStack("main", false)
-                } else {
-                    android.util.Log.w("Navigation", "BackHandler: Ignored duplicate exit attempt")
+            DisposableEffect(navController) {
+                onDispose {
+                    if (navController.currentDestination?.route != "quiz") {
+                        android.util.Log.d("Navigation", "Disposed quiz destination: Navigated away, ending quiz.")
+                        viewModel.endQuiz()
+                    }
                 }
             }
 
@@ -132,7 +130,6 @@ fun MainNavigation(
                     if (!isExiting) {
                         isExiting = true
                         android.util.Log.d("Navigation", "onExit triggered from quiz screen")
-                        viewModel.endQuiz()
                         navController.popBackStack("main", false)
                     } else {
                         android.util.Log.w("Navigation", "onExit: Ignored duplicate exit attempt")
