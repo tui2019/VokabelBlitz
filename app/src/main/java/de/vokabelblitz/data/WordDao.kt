@@ -15,8 +15,7 @@ interface WordDao {
     @Query("SELECT COUNT(*) FROM words")
     fun getWordCount(): Flow<Int>
 
-    @Query("SELECT * FROM words ORDER BY RANDOM() LIMIT :limit")
-    suspend fun getRandomWords(limit: Int): List<Word>
+
 
     @Query("SELECT * FROM words ORDER BY RANDOM()")
     suspend fun getAllWordsShuffled(): List<Word>
@@ -27,6 +26,5 @@ interface WordDao {
     @Delete
     suspend fun delete(word: Word)
 
-    @Query("DELETE FROM words WHERE id = :wordId")
-    suspend fun deleteById(wordId: Int)
+
 }

@@ -12,8 +12,8 @@ android {
         applicationId = "de.vokabelblitz"
         minSdk = 31
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
     }
 
     buildTypes {
@@ -86,9 +86,7 @@ dependencies {
 
   // Navigation
   implementation(libs.androidx.navigation.compose)
-  implementation(libs.androidx.navigation3.ui)
-  implementation(libs.androidx.navigation3.runtime)
-  implementation(libs.androidx.lifecycle.viewmodel.navigation3)
+
 
   // Room
   implementation(libs.androidx.room.runtime)
@@ -98,6 +96,5 @@ dependencies {
   // ML Kit GenAI (Gemini Nano on-device)
   implementation(libs.mlkit.genai.prompt)
 
-  // Guava for ListenableFuture
-  implementation(libs.guava)
+
 }

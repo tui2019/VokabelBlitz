@@ -6,7 +6,7 @@
     <color name="widget_background">#1C1B1F</color>
     <color name="widget_text">#C9C5D0</color>
     <color name="widget_icon_tint">#E6E1E5</color>
-    <color name="widget_button_bg">#D0BCFF</color> <!-- Primary dark -->
+
     <color name="widget_button_text">#381E72</color>
 
     <!-- Widget M3E button colors (Dark fallback) -->

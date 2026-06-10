@@ -19,9 +19,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.LibraryBooks
+import androidx.compose.material.icons.automirrored.filled.LibraryBooks
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.LibraryBooks
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -157,7 +157,7 @@ private fun MainScaffold(viewModel: WordViewModel, onStartQuiz: () -> Unit) {
     val navItems = remember {
         listOf(
             BottomNavItem("Lernen", Icons.Filled.Home, Icons.Outlined.Home),
-            BottomNavItem("Wörter", Icons.Filled.LibraryBooks, Icons.Outlined.LibraryBooks)
+            BottomNavItem("Wörter", Icons.AutoMirrored.Filled.LibraryBooks, Icons.AutoMirrored.Outlined.LibraryBooks)
         )
     }
  

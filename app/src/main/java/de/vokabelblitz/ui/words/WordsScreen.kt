@@ -1,6 +1,6 @@
 package de.vokabelblitz.ui.words
 
-import androidx.compose.animation.animateColorAsState
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +19,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.ui.unit.Dp
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.LibraryBooks
+
+import androidx.compose.material.icons.automirrored.outlined.LibraryBooks
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,7 +56,6 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.ui.layout.layout
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.animation.core.tween
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -108,7 +106,7 @@ fun WordsScreen(
             SnackbarHost(
                 hostState = snackbarHostState,
                 modifier = Modifier
-                    .padding(bottom = bottomPadding - 16.dp)
+                    .padding(bottom = bottomPadding + 8.dp)
             )
         },
         contentWindowInsets = WindowInsets(0.dp),
@@ -199,7 +197,7 @@ fun WordsScreen(
                             ) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Icon(
-                                        Icons.Outlined.LibraryBooks,
+                                        Icons.AutoMirrored.Outlined.LibraryBooks,
                                         contentDescription = null,
                                         modifier = Modifier.size(64.dp),
                                         tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f)
